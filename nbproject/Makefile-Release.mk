@@ -35,7 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/c/arraylist.o \
 	${OBJECTDIR}/c/graphics.o \
+	${OBJECTDIR}/c/utils.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/unix/lnxutils.o \
 	${OBJECTDIR}/win/winutils.o
@@ -65,10 +67,20 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/totito: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/totito ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/c/arraylist.o: c/arraylist.c
+	${MKDIR} -p ${OBJECTDIR}/c
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/c/arraylist.o c/arraylist.c
+
 ${OBJECTDIR}/c/graphics.o: c/graphics.c
 	${MKDIR} -p ${OBJECTDIR}/c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/c/graphics.o c/graphics.c
+
+${OBJECTDIR}/c/utils.o: c/utils.c
+	${MKDIR} -p ${OBJECTDIR}/c
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/c/utils.o c/utils.c
 
 ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}

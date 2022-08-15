@@ -21,13 +21,15 @@
 
 /* cabeceras linux. */
 #include "lnxutils.h"
-#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <limits.h>
+#include <math.h>
 
-void gotoxy(int x, int y) {
+int gotoxy(int x, int y) {
     printf("%c[%d;%df", 0x1B, y, x);
+    return (1);
 }
 
 int kbhit(void) {
@@ -75,5 +77,19 @@ char waitForAnyKey(void) {
 
     pressed = getch();
     return ((char) pressed);
+}
+void Sleep(int tm) {
+    usleep(1000 * tm);
+}
+void console_cursor(int _visible) {
+    printf("%s", (_visible) 
+                ? "\033[?25h" 
+                : "\033[?25l");
+}
+char *gets(char *__restrict __s) {
+    char *_value = malloc(sizeof(char));
+    fgets(_value, INT_MAX, stdin);    
+    *__s = *_value;
+    return _value;
 }
 #endif

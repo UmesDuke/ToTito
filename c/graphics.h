@@ -27,10 +27,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    
 /* definimos los diferentes colores que puede
  tomar los textos por consola. */
-#define CL_NULL      "\x1b[0m"
+#define G2D_NULL      "\x1b[0m"
 #define FG_NEGRO     "\x1b[30m"
 #define FG_ROJO      "\x1b[31m"
 #define FG_VERDE     "\x1b[32m"
@@ -52,7 +52,15 @@ extern "C" {
 #define BG_CYAN      "\x1b[46m"
 #define BG_BLANCO    "\x1b[47m"
 #define BG_NULL      "\x1b[49m"
-
+    
+/* valores predterminados */
+#define VECTOR2_ZERO (new_vector2(0, 0))
+    
+/* enumerados */
+typedef enum enum_ln_tp {
+    Vert, Horz
+} LineMesh;
+    
 /* generamos las diferentes estructuras. */    
 typedef struct {
     int x, y;
@@ -68,10 +76,11 @@ Vector2 new_vector2(int x, int y);
 void GL_string(char *_value, Vector2 pos);
 
 /* dibuja una linea. */
-void GL_line(Vector2 start, Vector2 end);   
+void GL_line(Vector2 start, Vector2 end, LineMesh tp);   
 
 /* dibuna un rectanguloa. */
 void GL_rect(Vector2 size, Vector2 pos);
+void GL_fill_rect(Vector2 size, Vector2 pos);
 
 /* deermina el maximo. */
 int GL_max(int a, int b);
@@ -79,6 +88,13 @@ int GL_max(int a, int b);
 /* deermina el minimo. */
 int GL_min(int a, int b);
 
+/* color de la grafica. */
+void GL_color(char *_color);
+
+/*--------------------------/
+/      DIBUJA: #Button      /
+/ -------------------------*/
+void GL_button(Vector2 pos, Vector2 size, char *_value);
 /* fin prototipos. */    
 #ifdef __cplusplus
 }

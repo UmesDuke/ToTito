@@ -28,7 +28,7 @@
 extern "C" {
 #endif
     /* posiciona el cursor. */
-    void gotoxy(int x, int y);
+    int gotoxy(int x, int y);
 
     /* limpia la pantalla. */
     void clrscr();
@@ -37,9 +37,19 @@ extern "C" {
      una tecla por parte del usuario. */
     char waitForAnyKey(void);
     
+    /* duerme la pantalla. */
+    void Sleep(int tm);
+    
+    /* visivilidad del cursor. */
+    void console_cursor(int _visible);    
+    
     /* funciones propios para linux. */
     int kbhit(void);    /* detecta si se presiona una tecla o no. */
     char getch();       /* espera hasta que se preciones una tecla. */
+    
+    /* leer una cadena de carateres. */
+    char *gets(char *__restrict __s);
+    
 #ifdef __cplusplus
 }
 #endif

@@ -18,6 +18,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* inico if */
+#if (defined _WIN32 || defined _WIN64)
+/* caneceras windows. */
+#include <windows.h>
+#include <conio.h>
+
+/* inclumos windows-utils*/
+#include "../win/winutils.h"
+#elif (defined __unix_ || defined __linux__)
+/* cabeceras linux. */
+#include <unistd.h>
+#include <fcntl.h>
+#include <termios.h>
+
+/* incluimos linux-utils. */
+#include "../unix/lnxutils.h"
+#endif /* fin if */
+
 /* librerias con los prototipos. */
 #include "graphics.h"
 
@@ -53,18 +71,50 @@ void GL_rect(Vector2 size, Vector2 pos) {
         printf("%c", '-');
     }
 }
-void GL_line(Vector2 start, Vector2 end) {
-    int sx = GL_min(start.x, end.x),
-        nx = GL_max(start.x, end.y);
-    
-    int sy = GL_min(start.x, end.x),
-        ny = GL_max(start.x, end.y);
-    int w = sx - nx, h = sy - ny;
-    
+void GL_fill_rect(Vector2 size, Vector2 pos) {
+    int w = 0, h = 0;
+    for (; h < size.y; h++) {
+        for (w = 0; w <= size.x; w++) {
+            gotoxy(pos.x + w, pos.y + h);
+            printf("%c", ' ');
+        }
+    }
+}
+void GL_line(Vector2 start, Vector2 end, LineMesh tp) {
+    int x0 = start.x, x1 = end.x,
+        y0 = start.y, y1 = end.y;
+    if (tp == Vert) {
+        for (; y0 < y1; y0++) {
+            gotoxy(x0, y0);
+            printf(" ");
+        }
+    } else if (tp == Horz) {
+        for (;x0 < x1; x0++) {
+            gotoxy(x0, y0);
+            printf(" ");
+        }
+    }
 }
 int GL_max(int a, int b) {
     return (a >= b) ? a : b;
 }
 int GL_min(int a, int b) {
     return (a <= b) ? a : b;
+}
+void GL_color(char *_color) {
+    printf(_color);
+}
+
+void GL_button(Vector2 pos, Vector2 size, char *_value) {
+    GL_fill_rect(size, pos); 
+    if (_value != NULL) {
+        int x = pos.x,
+            y = pos.y;
+        
+        int w = size.x,
+            h = size.y;
+        
+        gotoxy(x + 2, y + (h / 2));
+        printf("%s", _value);
+    }
 }
