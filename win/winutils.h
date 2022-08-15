@@ -36,6 +36,9 @@ extern "C" {
     /* pone en pausa hasta que se precione
      una tecla por parte del usuario. */
     char waitForAnyKey(void);
+    
+    /* visivilidad del cursor. */
+    void console_cursor(int _visible);
 #ifdef __cplusplus
 }
 #endif

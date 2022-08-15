@@ -4,8 +4,10 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>c/arraylist.h</itemPath>
       <itemPath>c/graphics.h</itemPath>
       <itemPath>linux/lnxutils.h</itemPath>
+      <itemPath>c/utils.h</itemPath>
       <itemPath>win/winutils.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -15,9 +17,11 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>c/arraylist.c</itemPath>
       <itemPath>c/graphics.c</itemPath>
       <itemPath>unix/lnxutils.c</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>c/utils.c</itemPath>
       <itemPath>win/winutils.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -42,9 +46,17 @@
       </toolsSet>
       <compileType>
       </compileType>
+      <item path="c/arraylist.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="c/arraylist.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="c/graphics.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="c/graphics.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="c/utils.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="c/utils.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="linux/lnxutils.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -77,9 +89,17 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="c/arraylist.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="c/arraylist.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="c/graphics.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="c/graphics.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="c/utils.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="c/utils.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="linux/lnxutils.h" ex="false" tool="3" flavor2="0">
       </item>

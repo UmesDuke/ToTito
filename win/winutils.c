@@ -49,5 +49,12 @@ char waitForAnyKey(void) {
     pressed = getch();
     return ((char) pressed);
 }
+void console_cursor(int _visible) {
+    static const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cci;
+    GetConsoleCursorInfo(handle, &cci);
+    cci.bVisible = _visible; // show/hide cursor
+    SetConsoleCursorInfo(handle, &cci);
+}
 #endif
 
