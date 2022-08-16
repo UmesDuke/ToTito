@@ -76,33 +76,32 @@ Boolean IA_fin_partida(int rows, int cols, Point m[rows][cols]) {
     return IA_tablero_completo(rows, cols, m) 
             || (IA_ganar_partida(rows, cols, m) != IA_Def);
 }
-Integer IA_ganar_partida(int rows, int cols, Point m[rows][cols]) {
-/*
-    if (m[0][0].val != IA_Def
-            && m[0][0].val == m[1][1].val 
-            && m[0][0].val == m[2][2].val) {
-        return m[0][0].val;
+Boolean IA_check_partida(int rows, int cols, Point m[rows][cols], Integer _t) {
+    if (m[0][0].val == _t && m[1][1].val == _t && m[2][2].val == _t) {
+        return True;
     }
-    if (m[0][2].val != IA_Def
-            && m[0][2].val == m[1][1].val 
-            && m[0][2].val == m[2][0].val) {
-        return m[0][2].val;
+    if (m[0][2].val == _t && m[1][1].val == _t && m[2][0].val == _t) {
+        return True;
     }
-    for (int f = 0; f <rows; f++) {
-        if (m[f][0].val != IA_Def 
-                && m[f][0].val == m[f][1].val 
-                && m[f][0].val == m[f][2].val) {
-            return m[f][0].val;
+    /*int r = 0, c = 0;*/
+    for (int r = 0; r < rows; r++) {
+        if (m[r][0].val == _t && m[r][1].val == _t && m[r][2].val == _t) {
+            return True;
         }
     }
     for (int c = 0; c < cols; c++) {
-        if (m[0][c].val != IA_Def 
-                && m[0][c].val == m[1][c].val
-                && m[0][c].val == m[2][c].val) {
-            return m[0][c].val;
+        if (m[0][c].val == _t && m[1][c].val == _t && m[2][c].val == _t) {
+            return True;
         }
     }
-*/
+    return False;
+}
+Integer IA_ganar_partida(int rows, int cols, Point m[rows][cols]) {
+    if  (IA_check_partida(rows, cols, m, IA_Uno)) {
+        return IA_Uno;
+    } else if  (IA_check_partida(rows, cols, m, IA_Zero)) {
+        return IA_Zero;
+    }
     return IA_Def;
 }
 Integer IA_min(int rows, int cols, Point m[rows][cols]) {
