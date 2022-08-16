@@ -26,6 +26,10 @@
 #include <termios.h>
 #include <limits.h>
 #include <math.h>
+#include <string.h>
+
+#define MAXIMA_LONGITUD_CADENA 50
+
 
 int gotoxy(int x, int y) {
     printf("%c[%d;%df", 0x1B, y, x);
@@ -88,8 +92,10 @@ void console_cursor(int _visible) {
 }
 char *gets(char *__restrict __s) {
     char *_value = malloc(sizeof(char));
-    fgets(_value, INT_MAX, stdin);    
-    *__s = *_value;
+    
+    fgets(_value, INT_MAX, stdin);
+    
+    strcpy(__s, _value);
     return _value;
 }
 #endif

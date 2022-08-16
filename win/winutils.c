@@ -29,7 +29,7 @@ int gotoxy(int x, int y) {
     HANDLE h_stdout;
     coord.X = x;
     coord.Y = y;
-    if ((h_stdout = GetStdHandle(STD_OUTPUT_HANDLE)) 
+    if ((h_stdout = GetStdHandle(STD_OUTPUT_HANDLE))
             == INVALID_HANDLE_VALUE)
         return 0;
     if (SetConsoleCursorPosition(h_stdout, coord) == 0)
@@ -49,12 +49,17 @@ char waitForAnyKey(void) {
     pressed = getch();
     return ((char) pressed);
 }
+
 void console_cursor(int _visible) {
-    static const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    //Funciones
+    HANDLE hCon;
+    hCon = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cci;
-    GetConsoleCursorInfo(handle, &cci);
-    cci.bVisible = _visible; // show/hide cursor
-    SetConsoleCursorInfo(handle, &cci);
+    //ATRIBUTOS DE LA FUNCIÓN
+    cci.dwSize = 2; //TAMAÑO DEL CURSOR
+    cci.bVisible = _visible; //VISIVILIDAD
+
+    SetConsoleCursorInfo(hCon, &cci);
 }
 #endif
 

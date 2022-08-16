@@ -91,6 +91,7 @@ Boolean IA_tablero_completo(int rows, int cols, Point m[rows][cols]);
 Boolean IA_fin_partida     (int rows, int cols, Point m[rows][cols]);
 
 Integer IA_ganar_partida(int rows, int cols, Point m[rows][cols]);
+Boolean IA_check_partida(int rows, int cols, Point m[rows][cols], Integer _t);
 Integer IA_min(int rows, int cols, Point m[rows][cols]);
 Integer IA_max(int rows, int cols, Point m[rows][cols]);
 

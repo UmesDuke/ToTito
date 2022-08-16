@@ -21,6 +21,7 @@
  * Author: javier
  * 
  * Application: Totito
+ * GitHub     : https://github.com/UmesDuke/ToTito
  */
 #if (defined _WIN32 || defined _WIN64)
 /* caneceras windows. */
@@ -29,6 +30,14 @@
 
 /* inclumos windows-utils*/
 #include "win/winutils.h"
+
+/* numeros de teclas. */
+#define ky_up    72 /* ACII - Fecha arriba. */
+#define ky_down  80 /* ACII - Fecha abajo. */
+#define ky_left  75 /* ACII - Fecha izquierda. */
+#define ky_right 77 /* ACII - Fecha derecha. */
+#define ky_enter 13 /* ACII - Tecla entrar. */
+#define ky_esc   27 /* ACII - Tecla escape. */
 #elif (defined __unix_ || defined __linux__)
 /* cabeceras linux. */
 #include <stdlib.h>
@@ -38,20 +47,6 @@
 
 /* incluimos linux-utils. */
 #include "unix/lnxutils.h"
-#endif /* fin if */
-
-/* librerias estandar .*/
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-/* librerias propias. */
-#include "c/arraylist.h"
-#include "c/graphics.h"
-#include "c/utils.h"
-
-/* definiciones de macros. */
-#define STRING_LEN 20
 
 /* numeros de teclas. */
 #define ky_up    65 /* ACII - Fecha arriba. */
@@ -60,6 +55,18 @@
 #define ky_right 67 /* ACII - Fecha derecha. */
 #define ky_enter 10 /* ACII - Tecla entrar. */
 #define ky_esc   27 /* ACII - Tecla escape. */
+#endif /* fin if */
+
+/* librerias estandar .*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+/* librerias propias. */
+#include "c/arraylist.h"
+#include "c/graphics.h"
+#include "c/utils.h"
 
 /* enumerados */
 typedef enum enum_nivel {
@@ -84,7 +91,7 @@ typedef struct stc_datos {
 } Datos;
 typedef struct stc_jugador {
     int id;
-    char name[STRING_LEN];
+    char name[20];
     Datos d_jugador;
 } Jugador;
 
@@ -94,7 +101,9 @@ void pre_screen(void);
 void menu_screen(void);
 void menu_estadistica(void);
 void owner_details(void);
+
 void GL_clear(void);
+void GL_points(void);
 
 void limpiar_fichas(void);
 void input_game(void);
@@ -104,18 +113,24 @@ void move_boot_facil(void);
 void move_boot_normal(void);
 void poner_ficha_boot(void);
 
+Integer compare_to(Jugador j1, Jugador j2, Integer tp);
+void burbuja(Integer tp);
+void imprimir_lista(int _a, int _b);
+
 Nivel menu_modo(void);
-Jugador *menu_play(Nivel _n);
+Jugador menu_play(Nivel _n);
 Partida newPartida(Nivel _n);
-Nivel getNivelJugador(Jugador *_j);
+Nivel getNivelJugador(Jugador _j);
 
 /* constantes. */
 const int n_rows = 3;
 const int n_cols = 3;
 
 /* variables */
-Jugador *player = NULL;
-ArrayList *list = NULL;
+Jugador player;
+/*ArrayList *list = NULL;*/
+Integer len = 0;
+Jugador list[10];
 Point tablero[3][3];
 
 Boolean run     = False;
@@ -192,6 +207,44 @@ void GL_clear(void) {
     clrscr();
     GL_color(BG_BLANCO);
     GL_fill_rect(new_vector2(src_width, src_height), VECTOR2_ZERO);
+}
+
+void GL_points(void) {
+    if (ganador != GM_Null) {
+        Nivel nl = getNivelJugador(player);
+        int pnts = 0;
+        
+        if (ganador == GM_IA) {
+            switch (nl) {
+                case Facil:
+                    pnts = -75; 
+                    break;
+                case Medio:
+                    pnts = -50;
+                    break;
+                case Dificil:
+                    pnts = -25;
+                    break;
+                    
+            }
+        } else {
+            switch (nl) {
+                case Facil:
+                    pnts = 25; 
+                    break;
+                case Medio:
+                    pnts = 50;
+                    break;
+                case Dificil:
+                    pnts = 100;
+                    break;
+                    
+            }
+        }
+        
+        int aux = player.d_jugador.puntage;
+        player.d_jugador.puntage = (aux + pnts);
+    }
 }
 
 void loader_screen(void) {
@@ -329,40 +382,58 @@ void menu_screen(void) {
     }
 }
 void menu_estadistica(void) {
-    int x = src_width / 2, y = src_height - 2;
+    int x = src_width / 2, 
+        y = src_height / 2;
+    
+    char str1[] = "E S T A D I S T I C A S";
+    GL_color(FG_NEGRO);
+    gotoxy(x - (strlen(str1) / 2), y - 7);
+    printf("%s", str1);
+    
+    char str2[] = "[ GET ] :[0-5] ";
+    gotoxy(x - (strlen(str1)), y - 5);
+    printf("%s", str2);
+    
+    /*GL_color(BG_AZUL);*/
+    GL_rect(new_vector2(35, 2), new_vector2(x - strlen(str1) + strlen(str2), y - 6));
+    
+    gotoxy(x - strlen(str1) + strlen(str2) + 1, y - 5);
+    console_cursor(True);
+        
+    int tp = 0;
+    scanf("%d", &tp);
+    
+    console_cursor(False);
+    
+    GL_clear();
+    
+    x = src_width / 2;
+    y = src_height - 2;
 
     GL_color(BG_VERDE);
     GL_color(FG_BLANCO);
-    GL_fill_rect(new_vector2(40, 20), new_vector2(x - 20, y - 20));
+    GL_fill_rect(new_vector2(55, 20), new_vector2(x - 25, y - 20));
 
     /*GL_color(G2D_NULL);*/
-    GL_color(FG_AZUL);
+    GL_color(FG_NEGRO);
 
-    gotoxy(x - 19, y - 18);
-    printf(FG_BLANCO " Elelige un modo: ");
-    gotoxy(x - 19, y - 17);
-    printf(FG_NEGRO " - Principiante");
-    gotoxy(x - 19, y - 16);
-    printf(" - Medio");
-    gotoxy(x - 19, y - 15);
-    printf(" - Experto");
-
-    gotoxy(x - 19, y - 13);
-    printf(FG_BLANCO " Moviminetos: ");
-    gotoxy(x - 19, y - 12);
-    printf(FG_NEGRO " - Subir     >> Flecha arriba  [ ^ ]");
-    gotoxy(x - 19, y - 11);
-    printf(" - Abajor    >> Flecha abajo   [ v ]");
-    gotoxy(x - 19, y - 10);
-    printf(" - Derecha   >> Flecha derecha [ < ]");
-    gotoxy(x - 19, y - 9);
-    printf(" - Izquierda >> Flecha derecha [ > ]");
-
-    gotoxy(x - 19, y - 7);
-    printf(FG_BLANCO " Retorno: ");
-    gotoxy(x - 19, y - 6);
-    printf(FG_NEGRO " - ESC" G2D_NULL);
-
+    gotoxy(x - 6, y - 18);
+    printf("Estadisticas");
+    
+    gotoxy(x - 22, y - 16);printf("%s", "ID");
+    gotoxy(x - 13, y - 16);printf("%s", "Nombre");
+    gotoxy(x/*0*/, y - 16);printf("%s", "Fecha");
+    gotoxy(x + 10, y - 16);printf("%s", "Partidas");
+    gotoxy(x + 22, y - 16);printf("%s", "Punt.");
+    
+    int a = 0, 
+        b = len;
+    
+    if (len != 0) {
+        burbuja(tp);
+        imprimir_lista(a, b);
+    }
+    
     Boolean _b = True;
     while (_b) {
         if (kbhit()) {
@@ -406,11 +477,7 @@ void owner_details(void) {
     waitForAnyKey();
 }
 
-void pre_screen(void) {
-    if (list == NULL) {
-        list = newArrayList(sizeof(Jugador));
-    }
-    
+void pre_screen(void) {    
     Nivel n = menu_modo();
     
     GL_clear();
@@ -421,7 +488,7 @@ void pre_screen(void) {
     
     randomize;
     int ra = random(0, 10);    
-    turno  = /*ra % 2 == 0 ? GM_IA :*/ GM_Player;
+    turno  = (ra % 2 == 0) ? GM_IA : GM_Player;
     
     GL_clear();
     limpiar_fichas();    
@@ -576,25 +643,25 @@ void input_game(void) {
         }
     }
     
-/*
-    if (win != JNull) {
-        if (win == boot) {
-            color(BG_AMARILLO);
-            color(FG_BLANCO);
+    if (ganador != GM_Null) {
+        if (ganador == GM_IA) {
+            GL_color(BG_AMARILLO);
+            GL_color(FG_BLANCO);
             
             gotoxy(src_width / 2, src_height - 2);
             printf("Perdidste ;D...");
         } else {
-            color(BG_VERDE);
-            color(FG_BLANCO);
+            GL_color(BG_VERDE);
+            GL_color(FG_BLANCO);
             
             gotoxy(src_width / 2, src_height - 2);
             printf("Has Ganado ;D...");
         }
     }
     
-    color(RESET_COLOR);
-*/
+    GL_color(G2D_NULL);
+    GL_points();
+    
     waitForAnyKey();    
     menu_screen();
 }
@@ -609,8 +676,8 @@ Partida newPartida(Nivel _n) {
     return p;
 }
 
-Jugador *menu_play(Nivel _n) {
-    Jugador *j = malloc(sizeof(Jugador));
+Jugador menu_play(Nivel _n) {
+    Jugador j;
     
     int x = src_width / 2, 
         y = src_height / 2;
@@ -630,7 +697,7 @@ Jugador *menu_play(Nivel _n) {
     gotoxy(x - strlen(str1) + strlen(str2) + 1, y - 5);
     console_cursor(True);
         
-    char *j_name = malloc(sizeof(char));
+    char j_name[20];
     fflush(stdin);
     gets(j_name);
     fflush(stdin);
@@ -638,12 +705,10 @@ Jugador *menu_play(Nivel _n) {
     console_cursor(False);
     
     Boolean ya_regis = False;
-    for (int i = 0; i < list->length; i++) {
-        Jugador *item = list->get(list, i);
-        if (item == NULL)
-            continue;
+    for (int i = 0; i < len; i++) {
+        Jugador item = list[i];
         
-        if (strcmp(item->name, j_name) == 0) {
+        if (strcmp(item.name, j_name) == 0) {
             ya_regis = True;
             j = item;
             break;
@@ -652,44 +717,44 @@ Jugador *menu_play(Nivel _n) {
     
     if (!ya_regis) {
         Datos d;
-        d.partidas   = 0;
+        d.partidas   = 1;
         d.f_registro = newCalendar();
         d.p_dificil  = newPartida(Dificil);
         d.p_facil    = newPartida(Facil);
         d.p_normal   = newPartida(Medio);
         
-        j->d_jugador = d;
-        j->id = list->length + 1;
-        j->d_jugador.puntage = 0;
-        strcpy(j->name, j_name);
+        j.d_jugador = d;
+        j.id = len + 1;
+        j.d_jugador.puntage = 0;
+        strcpy(j.name, j_name);
+        
+        list[len++] = j;
     }
     switch (_n) {
         case Facil:
-            j->d_jugador.p_facil.activo   = True;
-            j->d_jugador.p_normal.activo  = False;
-            j->d_jugador.p_dificil.activo = False;
+            j.d_jugador.p_facil.activo   = True;
+            j.d_jugador.p_normal.activo  = False;
+            j.d_jugador.p_dificil.activo = False;
             break;
         case Medio:
-            j->d_jugador.p_facil.activo   = False;
-            j->d_jugador.p_normal.activo  = True;
-            j->d_jugador.p_dificil.activo = False;
+            j.d_jugador.p_facil.activo   = False;
+            j.d_jugador.p_normal.activo  = True;
+            j.d_jugador.p_dificil.activo = False;
             break;
         case Dificil:
-            j->d_jugador.p_facil.activo   = False;
-            j->d_jugador.p_normal.activo  = False;
-            j->d_jugador.p_dificil.activo = True;
+            j.d_jugador.p_facil.activo   = False;
+            j.d_jugador.p_normal.activo  = False;
+            j.d_jugador.p_dificil.activo = True;
         default:
             break;
     }
-    int n_p = j->d_jugador.partidas;
-    j->d_jugador.partidas = n_p + 1;
-    
-    list->add(list, j);
+    int n_p = j.d_jugador.partidas;
+    j.d_jugador.partidas = n_p + 1;
     return j;
 }
 
-Nivel getNivelJugador(Jugador *_j) {
-    Datos d = _j->d_jugador;
+Nivel getNivelJugador(Jugador _j) {
+    Datos d = _j.d_jugador;
     if (d.p_dificil.activo) {
         /* modi dificil. */
         return d.p_dificil.tp_nivel;
@@ -796,4 +861,82 @@ Nivel menu_modo(void) {
     }    
     return _m;
 }
+void imprimir_lista(int _a, int _b) {
+    if (list != NULL) {
+        int x = src_width / 2,
+            y = src_height - 2;
+        
+        int n = _b;
+        int i = _a;
+        
+        Jugador j;
+        for (; i < n; i++) {
+            j = list[i];
 
+            Datos d = j.d_jugador;
+            Calendar c = d.f_registro;
+            
+            gotoxy(x - 22, y - (14 - i));printf("%d", j.id);
+            gotoxy(x - 13, y - (14 - i));printf("%s", j.name);
+            gotoxy(x - 3 , y - (14 - i));printf("%2d/%2d/%4d", c.day, c.month, c.year);
+            gotoxy(x + 10, y - (14 - i));printf("%d", d.partidas);
+            gotoxy(x + 22, y - (14 - i));printf("%d", d.puntage);
+        }
+    }
+}
+Integer compare_to(Jugador j1, Jugador j2, Integer tp) {
+    if (tp == 0 
+            && (j1.id != j2.id)) {
+        return (j1.id > j2.id) ? 1 : -1;
+    }
+    if (tp == 1) {
+        return strcmp(j1.name, j2.name);
+    }
+    if (tp == 2) {
+        Calendar c1 = j1.d_jugador.f_registro;
+        Calendar c2 = j2.d_jugador.f_registro;
+        
+        if (c1.day != c2.day) {
+            return (c1.day > c2.day) ? 1 : -1;
+        }
+        if (c1.month != c2.month) {
+            return (c1.month > c2.month) ? 1 : -1;
+        }
+        if (c1.year != c2.year) {
+            return (c1.year > c2.year) ? 1 : -1;
+        }
+    }
+    Datos d1 = j1.d_jugador;
+    Datos d2 = j2.d_jugador;
+    if (tp == 3 
+            && (d1.partidas != d2.partidas)) {
+        return (d1.partidas > d2.partidas) ? 1 : -1;
+    }
+    if (tp == 4 
+            && (d1.puntage != d2.puntage)) {
+        return (d1.puntage > d2.puntage) ? 1 : -1;
+    }
+    return 0;
+}
+void burbuja(Integer tp) {
+    if (list == NULL)
+        return;
+    
+    Jugador aux;
+    int i, numero_de_elementos = len;
+    Boolean s = True;
+    
+    while (s && (--numero_de_elementos > 0)) {
+        s = False; // no permutacion.
+        for (i = 1; i <= numero_de_elementos; i++) {
+            // ¿ el elemento (i - 1) es  mayor o menor que (i) ?
+            if (compare_to(list[i-1], list[i], tp)) {
+                // permutar los elemenos (i-1) e (i)
+                aux = list[i-1];
+                list[i-1] = list[i];
+                list[i] = aux;
+                s = True; // permutacion.
+            }
+        }
+    }
+}
